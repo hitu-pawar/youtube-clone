@@ -3,7 +3,10 @@
 }
 
 .play-video iframe{
-    width: 100%;
+    width:100%;
+    aspect-ratio:16/9;
+    border:none;
+    border-radius:10px;
     height: 37vw;
 }
 
@@ -12,6 +15,8 @@
     font-weight: 600;
     font-size: 22px;
 }
+
+
 
 .play-video-info{
     display: flex;
@@ -154,4 +159,9 @@
         margin-right: 15px;
         margin-top: 15px;
     }
+}
+
+.subscribed-btn {
+  background: #e0e0e0 !important;
+  color: #000 !important;
 }

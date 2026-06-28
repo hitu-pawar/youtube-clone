@@ -1,0 +1,157 @@
+body.dark {
+  background-color: #0f0f0f;
+  color: #f1f1f1;
+}
+
+/* Navbar */
+body.dark .navbar,
+body.dark nav {
+  background-color: #181818 !important;
+  color: #f1f1f1 !important;
+}
+
+/* Sidebar */
+body.dark .sidebar,
+body.dark .small-sidebar {
+  background-color: #0f0f0f !important;
+  color: #f1f1f1 !important;
+}
+
+body.dark .side-link p,
+body.dark .sidebar h3 {
+  color: #f1f1f1 !important;
+}
+
+body.dark .side-link.active {
+  background-color: #303030 !important;
+}
+
+body.dark .side-link:hover {
+  background-color: #272727 !important;
+}
+
+/* Home feed */
+body.dark .feed,
+body.dark .container,
+body.dark .large-container {
+  background-color: #0f0f0f !important;
+}
+
+body.dark .card h2,
+body.dark .card h3,
+body.dark .card p {
+  color: #f1f1f1 !important;
+}
+
+/* Play Video page - IMPORTANT: background pan override kar */
+body.dark .play-container,
+body.dark .play-video,
+body.dark .vid-description {
+  background-color: #0f0f0f !important;
+  color: #f1f1f1 !important;
+}
+
+body.dark .play-video h3,
+body.dark .play-video p,
+body.dark .play-video-info p,
+body.dark .play-video-info span {
+  color: #f1f1f1 !important;
+}
+
+body.dark .publisher {
+  background-color: #0f0f0f !important;
+}
+
+body.dark .publisher p,
+body.dark .publisher span {
+  color: #f1f1f1 !important;
+}
+
+body.dark .vid-description p,
+body.dark .vid-description h4 {
+  color: #f1f1f1 !important;
+}
+
+/* Comments */
+body.dark .comment {
+  background-color: #0f0f0f !important;
+}
+
+body.dark .comment h3,
+body.dark .comment p,
+body.dark .comment span {
+  color: #f1f1f1 !important;
+}
+
+/* Recommended sidebar */
+body.dark .recommended {
+  background-color: #0f0f0f !important;
+}
+
+body.dark .recommended .side-video-list,
+body.dark .side-video-list {
+  background-color: #0f0f0f !important;
+}
+
+body.dark .recommended .vid-info h4,
+body.dark .recommended .vid-info p,
+body.dark .vid-info h4,
+body.dark .vid-info p {
+  color: #f1f1f1 !important;
+}
+
+body.dark hr {
+  border-color: #303030 !important;
+}
+
+body.dark input {
+  background-color: #121212 !important;
+  color: #f1f1f1 !important;
+  border-color: #303030 !important;
+}
+
+/* Search / History / Channel pages */
+body.dark .search-box,
+body.dark .search-result-card,
+body.dark .history-card,
+body.dark .channel-page,
+body.dark .search-page,
+body.dark .history-page {
+  background-color: #0f0f0f !important;
+  color: #f1f1f1 !important;
+}
+
+body.dark .search-title,
+body.dark .search-channel,
+body.dark .search-date,
+body.dark .history-info h4,
+body.dark .history-info p,
+body.dark .channel-details h2,
+body.dark .channel-subs,
+body.dark .channel-desc {
+  color: #f1f1f1 !important;
+}
+
+body.dark .search-result-card:hover,
+body.dark .history-card:hover {
+  background-color: #272727 !important;
+}
+
+body.dark button {
+  background-color: #272727;
+  color: #f1f1f1;
+}
+
+body.dark .logo {
+  filter: invert(1) brightness(1.8);
+}
+
+body.dark .nav-right > div > div {
+  background-color: #212121 !important;
+  color: #f1f1f1 !important;
+  border-color: #303030 !important;
+}
+
+body.dark .nav-right > div > div a {
+  color: #f1f1f1 !important;
+}
