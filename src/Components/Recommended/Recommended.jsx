@@ -1,185 +1,60 @@
-import React from 'react';
-import './Recommended.css'
-import thumbnail1 from '../../assets/thumbnail1.png'
-import thumbnail2 from '../../assets/thumbnail2.png'
-import thumbnail3 from '../../assets/thumbnail3.png'
-import thumbnail4 from '../../assets/thumbnail4.png'
-import thumbnail5 from '../../assets/thumbnail5.png'
-import thumbnail6 from '../../assets/thumbnail6.png'
-import thumbnail7 from '../../assets/thumbnail7.png'
-import thumbnail8 from '../../assets/thumbnail8.png'
+import React, { useEffect, useState } from "react";
+import "./Recommended.css";
+import { Link } from "react-router-dom";
+import moment from "moment";
+import { API_KEY, value_converter } from "../../data";
 
+const Recommended = ({ categoryId }) => {
+  const [apiData, setApiData] = useState([]);
 
-const Recommended = () =>{
-    return (
-        <div className='recommended'>
-            <div className='side-video-list'>
-             <img src={thumbnail1} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+  const fetchData = async () => {
+    try {
+      const relatedVideo_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode=US&videoCategoryId=${categoryId}&key=${API_KEY}`;
 
-             <div className='side-video-list'>
-             <img src={thumbnail2} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+      const response = await fetch(relatedVideo_url);
+      const data = await response.json();
 
-             <div className='side-video-list'>
-             <img src={thumbnail3} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+      if (data.items) {
+        setApiData(data.items);
+      }
+    } catch (error) {
+      console.error("Error fetching recommended videos:", error);
+    }
+  };
 
-             <div className='side-video-list'>
-             <img src={thumbnail4} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+  useEffect(() => {
+    if (categoryId) {
+      fetchData();
+    }
+  }, [categoryId]);
 
-             <div className='side-video-list'>
-             <img src={thumbnail5} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+  return (
+    <div className="recommended">
+      {apiData.map((item) => (
+        <Link
+          to={`/video/${item.snippet.categoryId}/${item.id}`}
+          className="side-video-list"
+          key={item.id}
+        >
+          <img
+            src={item.snippet.thumbnails.medium.url}
+            alt={item.snippet.title}
+          />
 
-             <div className='side-video-list'>
-             <img src={thumbnail6} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+          <div className="vid-info">
+            <h4>{item.snippet.title}</h4>
 
-             <div className='side-video-list'>
-             <img src={thumbnail7} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+            <p>{item.snippet.channelTitle}</p>
 
-             <div className='side-video-list'>
-             <img src={thumbnail8} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
+            <p>
+              {value_converter(item.statistics.viewCount)} Views &bull;{" "}
+              {moment(item.snippet.publishedAt).fromNow()}
+            </p>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+};
 
-             <div className='side-video-list'>
-             <img src={thumbnail5} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
-
-             <div className='side-video-list'>
-             <img src={thumbnail3} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
-
-             <div className='side-video-list'>
-             <img src={thumbnail1} alt="" />
-             <div className="vid-info">
-                <h4>
-                    Best channel that help to be web developer
-                </h4>
-                <p>
-                    MernStack
-                </p>
-                <p>
-                    199K Views
-                </p>
-             </div>
-             </div>
-              
-        </div>
-    )
-}
-
-export default  Recommended
+export default Recommended;

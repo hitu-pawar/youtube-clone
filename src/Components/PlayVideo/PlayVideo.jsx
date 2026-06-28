@@ -14,16 +14,56 @@ import moment from 'moment'
 const PlayVideo = ({videoId}) => {
     
   const [apiData,setApiData] = useState(null);
+  const [channelData,setChannelData] = useState(null);
+  const [commentData, setCommentData] = useState([]);
+
 
   const fetchVideoData = async () =>{
     const videoDetails_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoId}&key=${API_KEY}`;
     await fetch(videoDetails_url).then(res=>res.json()).then(data =>setApiData(data.items[0]));
+  };
+
+  const fetchOtherData = async () => {
+  if (!apiData) return;
+
+  const channelData_url = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${apiData.snippet.channelId}&key=${API_KEY}`;
+
+  const res = await fetch(channelData_url);
+  const data = await res.json();
+
+  setChannelData(data.items[0]);
+};
+
+const fetchCommentData = async () => {
+  const comment_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&key=${API_KEY}`;
+
+  const res = await fetch(comment_url);
+  const data = await res.json();
+
+  if (data.items) {
+    setCommentData(data.items);
+  } else {
+    setCommentData([]);
+    console.log(data);
   }
+};
 
-  useEffect(()=>{
+useEffect(() => {
+  if (videoId) {
     fetchVideoData();
+  }
+}, [videoId]);
 
-  },[])
+   useEffect(()=>{
+     fetchOtherData();
+
+  },[apiData])
+
+  useEffect(() => {
+  if (videoId) {
+    fetchCommentData();
+  }
+}, [videoId]);
 
   return (
     <div className="play-video">
@@ -65,12 +105,19 @@ const PlayVideo = ({videoId}) => {
       <hr />
 
       <div className="publisher">
-        <img src={jack} alt="" />
+        <img
+  src={channelData?.snippet?.thumbnails?.default?.url}
+  alt=""
+/>
 
-        <div>
-          <p>{apiData?apiData.snippet.channelTitle:""}</p>
-          <span>1M Subscribers</span>
-        </div>
+<div>
+  <p>{apiData?.snippet?.channelTitle}</p>
+  <span>
+    {channelData
+      ? value_converter(channelData.statistics.subscriberCount)
+      : "0"} Subscribers
+  </span>
+</div>
 
         <button>Subscribe</button>
       </div>
@@ -80,205 +127,64 @@ const PlayVideo = ({videoId}) => {
 
         <hr />
 
-        <h4>{apiData?value_converter(apiData.statistics.commentCount):102} Comments</h4>
+        <h4>{commentData.length} Comments</h4>
 
-        <div className="comment">
-          <img src={user_profile} alt="" />
+{commentData.map((item) => (
+  <div className="comment" key={item.id}>
+    <img
+      src={item.snippet.topLevelComment.snippet.authorProfileImageUrl}
+      alt=""
+    />
 
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
+    <div>
+      <h3>
+        {item.snippet.topLevelComment.snippet.authorDisplayName}
+        <span>
+          {" "}
+          {moment(
+            item.snippet.topLevelComment.snippet.publishedAt
+          ).fromNow()}
+        </span>
+      </h3>
 
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
+      <p
+        dangerouslySetInnerHTML={{
+          __html: item.snippet.topLevelComment.snippet.textDisplay,
+        }}
+      />
 
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
+      <div className="comment-action">
+        <img src={like} alt="" />
+        <span>
+          {value_converter(
+            item.snippet.topLevelComment.snippet.likeCount
+          )}
+        </span>
 
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
+        <img src={dislike} alt="" />
+      </div>
+    </div>
+  </div>
+))}
 
-         <div className="comment">
-          <img src={user_profile} alt="" />
+        
+           
 
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
+         
 
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
+        
 
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
+       
 
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
+         
 
-         <div className="comment">
-          <img src={user_profile} alt="" />
+         
 
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
+        
 
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
+       
 
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
-
-         <div className="comment">
-          <img src={user_profile} alt="" />
-
-          <div>
-            <h3>
-              Jack Nicholson <span>1 day ago</span>
-            </h3>
-
-            <p>
-              A global computer network providing a variety of information
-              and communication facilities.
-            </p>
-
-            <div className="comment-action">
-              <img src={like} alt="" />
-              <span>244</span>
-
-              <img src={dislike} alt="" />
-            </div>
-          </div>
-        </div>
+        
 
       </div>
 
