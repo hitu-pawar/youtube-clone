@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { API_KEY } from '../../data'
 import './Search.css'
+import { SearchSkeleton } from '../../Components/Skeleton/Skeleton'
+import { useToast } from '../../Components/Toast/Toast'
 
 // ISO 8601 duration (jasं PT1M30S) la seconds madhе convert kar
 const parseDuration = (duration) => {
@@ -16,18 +18,31 @@ const Search = () => {
   const { searchQuery } = useParams();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState(false);
+  const [nextPageToken, setNextPageToken] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
 
-  const fetchSearchResults = async () => {
-    setLoading(true);
+  const { showToast } = useToast();
+  const observerRef = useRef(null);
+  const loaderRef = useRef(null);
+
+  const fetchSearchResults = async (pageToken = "") => {
     try {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=30&q=${searchQuery}&type=video&key=${API_KEY}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${searchQuery}&type=video&pageToken=${pageToken}&key=${API_KEY}`;
       const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Search request failed");
+      }
+
       const data = await response.json();
       const items = data.items || [];
 
       if (items.length === 0) {
-        setVideos([]);
-        setLoading(false);
+        if (pageToken === "") setVideos([]);
+        setHasMore(false);
+        setError(false);
         return;
       }
 
@@ -48,20 +63,71 @@ const Search = () => {
         return dur === undefined || dur > 60;
       });
 
-      setVideos(filtered);
+      if (pageToken === "") {
+        setVideos(filtered);
+      } else {
+        setVideos((prev) => [...prev, ...filtered]);
+      }
+
+      setNextPageToken(data.nextPageToken || null);
+      setHasMore(!!data.nextPageToken);
+      setError(false);
     } catch (error) {
       console.error("Search fetch error:", error);
-      setVideos([]);
+      setError(true);
+      showToast("Search failed. Check your connection or API quota.", "error");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchSearchResults();
+    setLoading(true);
+    setVideos([]);
+    setNextPageToken(null);
+    setHasMore(true);
+    fetchSearchResults("");
   }, [searchQuery]);
 
+  // Infinite scroll observer
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting && hasMore && !loadingMore && !loading && nextPageToken) {
+      setLoadingMore(true);
+      fetchSearchResults(nextPageToken);
+    }
+  }, [hasMore, loadingMore, loading, nextPageToken]);
+
+  useEffect(() => {
+    const option = { root: null, rootMargin: "200px", threshold: 0 };
+    observerRef.current = new IntersectionObserver(handleObserver, option);
+    if (loaderRef.current) observerRef.current.observe(loaderRef.current);
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [handleObserver]);
+
+  const handleRetry = () => {
+    setLoading(true);
+    setError(false);
+    fetchSearchResults("");
+  };
+
   if (loading) {
-    return <div className="search-loading">Loading...</div>;
+    return <SearchSkeleton count={6} />;
+  }
+
+  if (error && videos.length === 0) {
+    return (
+      <div className="search-error">
+        <p>⚠️ Kahi problem zali search karताना.</p>
+        <button onClick={handleRetry} className="search-retry-btn">
+          Retry
+        </button>
+      </div>
+    );
   }
 
   if (videos.length === 0) {
@@ -73,10 +139,10 @@ const Search = () => {
       <h3 className="search-heading">Search results for: {searchQuery}</h3>
 
       <div className="search-results-list">
-        {videos.map((item) => (
+        {videos.map((item, index) => (
           <Link
             to={`/video/0/${item.id.videoId}`}
-            key={item.id.videoId}
+            key={`${item.id.videoId}-${index}`}
             className="search-result-card"
           >
             <img
@@ -93,6 +159,12 @@ const Search = () => {
             </div>
           </Link>
         ))}
+      </div>
+
+      {/* Infinite scroll trigger + loading more indicator */}
+      <div ref={loaderRef} style={{ textAlign: "center", padding: "20px" }}>
+        {loadingMore && <p>Loading more results...</p>}
+        {!hasMore && videos.length > 0 && <p style={{ color: "#909090" }}>No more results.</p>}
       </div>
     </div>
   )

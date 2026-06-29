@@ -35,9 +35,35 @@ const Sidebar = ({sidebar,category,setCategory}) => {
         </Link>
 
         <Link to='/stats' className="side-link" style={{textDecoration: "none", color: "inherit"}}>
-    <img src={history_icon} alt="" />
-    <p>Stats</p>
-</Link>
+            <img src={history_icon} alt="" />
+            <p>Stats</p>
+        </Link>
+
+        <Link to='/trending' className="side-link" style={{textDecoration: "none", color: "inherit"}}>
+            <span style={{
+                width: "20px",
+                marginRight: "20px",
+                fontSize: "16px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0
+            }}>🔥</span>
+            <p>Trending</p>
+        </Link>
+
+        <Link to='/playlists' className="side-link" style={{textDecoration: "none", color: "inherit"}}>
+            <span style={{
+                width: "20px",
+                marginRight: "20px",
+                fontSize: "16px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0
+            }}>📋</span>
+            <p>Playlists</p>
+        </Link>
 
         <div className={`side-link ${category===20?"active":""}`} onClick={()=>setCategory(20)}>
             <img src={game_icon} alt="" />
@@ -79,29 +105,29 @@ const Sidebar = ({sidebar,category,setCategory}) => {
             <p>News</p>
         </div>
         <hr />
-        </div>
+      </div>
 
-        <div className="subscribed-list">
-            <h3>Subscribed</h3>
+      <div className="subscribed-list">
+          <h3>Subscribed</h3>
 
-            {subscriptions.length === 0 && (
-              <p style={{fontSize: "13px", color: "#606060", padding: "0 20px"}}>
-                No subscriptions yet
-              </p>
-            )}
+          {subscriptions.length === 0 && (
+            <p style={{fontSize: "13px", color: "#606060", padding: "0 20px"}}>
+              No subscriptions yet
+            </p>
+          )}
 
-            {subscriptions.map((channel) => (
-              <Link
-                to={`/channel/${channel.channelId}`}
-                key={channel.channelId}
-                className="side-link"
-                style={{textDecoration: "none", color: "inherit"}}
-              >
-                <img src={channel.channelThumbnail} alt="" />
-                <p>{channel.channelTitle}</p>
-              </Link>
-            ))}
-        </div>
+          {subscriptions.map((channel) => (
+            <Link
+              to={`/channel/${channel.channelId}`}
+              key={channel.channelId}
+              className="side-link"
+              style={{textDecoration: "none", color: "inherit"}}
+            >
+              <img src={channel.channelThumbnail} alt="" />
+              <p>{channel.channelTitle}</p>
+            </Link>
+          ))}
+      </div>
     </div>
   )
 }
