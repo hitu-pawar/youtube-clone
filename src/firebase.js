@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC3bsfx5WlafWt9Yclj-ni9WFnPHVFhqZA",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "vidtube-2fb2f.firebaseapp.com",
   projectId: "vidtube-2fb2f",
   storageBucket: "vidtube-2fb2f.firebasestorage.app",
@@ -12,6 +12,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
